@@ -1,1 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- SteelPulse Dashboard — GitHub Pages ready -->
+<title>SteelPulse — Market Intelligence | March 2025</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', system-ui, sans-serif; background: #F0F4F9; color: #0F172A; min-height: 100vh; }
 
+  /* ── Top bar ── */
+  .topbar { background: #0F172A; height: 54px; display: flex; align-items: center; padding: 0 28px; gap: 16px; }
+  .topbar-logo { width: 30px; height: 30px; background: #1A56DB; border-radius: 7px; display: grid; place-items: center; flex-shrink: 0; }
+  .topbar-logo svg { display: block; }
+  .topbar-name { color: #F8FAFC; font-weight: 800; font-size: 14px; letter-spacing: 0.2px; }
+  .topbar-sub  { color: #475569; font-size: 13px; }
+  .topbar-live { margin-left: auto; display: flex; align-items: center; gap: 6px; }
+  .live-dot    { width: 7px; height: 7px; border-radius: 50%; background: #22C55E; }
+  .topbar-live span { color: #64748B; font-size: 11px; font-weight: 500; }
+
+  /* ── Tabs ── */
+  .tabs-wrap { background: #fff; border-bottom: 1px solid #E2E8F0; }
+  .tabs-inner { max-width: 1200px; margin: 0 auto; padding: 0 28px; display: flex; align-items: center; }
+  .tab-btn {
+    padding: 15px 20px; background: none; border: none;
+    border-bottom: 2px solid transparent; color: #64748B;
+    font-family: inherit; font-size: 13px; font-weight: 500;
+    cursor: pointer; display: flex; align-items: center; gap: 7px;
+    transition: color 0.15s; margin-bottom: -1px;
+  }
+  .tab-btn.active { border-bottom-color: #1A56DB; color: #1A56DB; font-weight: 700; }
+  .tab-btn:hover:not(.active) { color: #374151; }
+  .tab-count {
+    font-size: 10px; font-weight: 700; border-radius: 12px; padding: 1px 7px;
+    background: #F8FAFC; color: #94A3B8;
+  }
+  .tab-btn.active .tab-count { background: #EFF6FF; color: #1D4ED8; }
+  .tabs-info { margin-left: auto; font-size: 11px; color: #94A3B8; }
+
+  /* ── Main ── */
+  .main { max-width: 1200px; margin: 0 auto; padding: 28px 28px 60px; }
+
+  /* ── Page header ── */
+  .page-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 22px; flex-wrap: wrap; gap: 16px; }
+  .page-title  { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
+  .page-title span { color: #94A3B8; font-weight: 400; }
+  .page-sub    { font-size: 13px; color: #94A3B8; margin-top: 5px; }
+  .summary-cards { display: flex; gap: 12px; flex-wrap: wrap; }
+  .summary-card {
+    background: #fff; border: 1px solid #E2E8F0; border-radius: 10px;
+    padding: 12px 18px; text-align: right;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04); min-width: 120px;
+  }
+  .summary-card .sc-label { font-size: 9px; color: #94A3B8; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+  .summary-card .sc-value { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; margin-top: 4px; }
+  .summary-card .sc-sub   { font-size: 10px; color: #CBD5E1; margin-top: 1px; }
+
+  /* ── Alert ── */
+  .alert {
+    background: #EFF6FF; border: 1px solid #BFDBFE; border-left: 4px solid #1A56DB;
+    border-radius: 8px; padding: 14px 18px; margin-bottom: 22px;
+    display: flex; gap: 12; align-items: flex-start;
+  }
+  .alert-icon { color: #1A56DB; font-size: 17px; flex-shrink: 0; margin-right: 12px; margin-top: 1px; }
+  .alert-title { font-size: 10px; font-weight: 700; color: #1E40AF; letter-spacing: 0.6px; text-transform: uppercase; margin-bottom: 4px; }
+  .alert-body  { font-size: 13px; color: #1E3A8A; line-height: 1.65; }
+
+  /* ── Index badges ── */
+  .index-row { display: flex; gap: 12px; margin-bottom: 22px; flex-wrap: wrap; }
+  .index-badge {
+    background: #fff; border: 1px solid #E2E8F0; border-radius: 8px;
+    padding: 13px 20px; display: flex; align-items: center; gap: 18px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .index-badge .ib-label { font-size: 11px; color: #64748B; max-width: 200px; line-height: 1.5; }
+  .index-badge .ib-sep   { width: 1px; height: 36px; background: #E2E8F0; }
+  .index-badge .ib-value { font-size: 26px; font-weight: 800; color: #DC2626; letter-spacing: -1px; }
+
+  /* ── KPI Cards ── */
+  .kpi-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; margin-bottom: 24px; }
+  .kpi-card {
+    background: #fff; border: 1px solid #E2E8F0; border-top: 3px solid #1A56DB;
+    border-radius: 10px; padding: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    animation: fadeUp 0.4s both;
+  }
+  .kpi-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
+  .kpi-grade  { font-size: 10px; font-weight: 700; color: #64748B; letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 6px; }
+  .kpi-price  { font-size: 30px; font-weight: 800; color: #0F172A; letter-spacing: -1px; line-height: 1; }
+  .kpi-label  { font-size: 11px; color: #94A3B8; margin-top: 4px; }
+  .kpi-delta  { border-radius: 8px; padding: 6px 10px; text-align: center; }
+  .kpi-delta .kd-val  { font-size: 12px; font-weight: 800; }
+  .kpi-delta .kd-sub  { font-size: 9px; margin-top: 2px; opacity: 0.7; }
+  .kpi-bars   { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+  .kpi-bar-row { display: flex; justify-content: space-between; margin-bottom: 3px; }
+  .kpi-bar-row span:first-child { font-size: 10px; color: #94A3B8; }
+  .kpi-bar-row span:last-child  { font-size: 10px; font-weight: 600; color: #475569; }
+  .bar-track  { height: 5px; background: #F1F5F9; border-radius: 3px; overflow: hidden; }
+  .bar-fill   { height: 100%; border-radius: 3px; width: 0; transition: width 0.9s cubic-bezier(.16,1,.3,1); }
+  .kpi-details { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .kpi-detail-cell { background: #F8FAFC; border-radius: 6px; padding: 9px 11px; border: 1px solid #F1F5F9; }
+  .kpi-detail-cell .dc-label { font-size: 9px; color: #94A3B8; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 3px; }
+  .kpi-detail-cell .dc-val   { font-size: 12px; font-weight: 600; color: #334155; }
+  .kpi-detail-cell .dc-val.empty { color: #CBD5E1; }
+
+  /* ── Charts ── */
+  .charts-row { display: grid; grid-template-columns: 3fr 2fr; gap: 18px; margin-bottom: 20px; }
+  .chart-card { background: #fff; border: 1px solid #E2E8F0; border-radius: 10px; padding: 22px 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+  .chart-title { font-size: 13px; font-weight: 700; color: #0F172A; }
+  .chart-sub   { font-size: 11px; color: #94A3B8; margin-top: 3px; margin-bottom: 18px; }
+  .chart-wrap  { position: relative; height: 220px; }
+
+  /* ── Table ── */
+  .table-card  { background: #fff; border: 1px solid #E2E8F0; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+  .table-header { padding: 16px 24px; border-bottom: 1px solid #F1F5F9; display: flex; justify-content: space-between; align-items: center; }
+  .table-header .th-title { font-size: 13px; font-weight: 700; color: #0F172A; }
+  .table-header .th-sub   { font-size: 11px; color: #94A3B8; }
+  .table-scroll { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead tr { background: #F8FAFC; }
+  th {
+    padding: 11px 20px; text-align: left; font-size: 10px; font-weight: 700;
+    color: #64748B; letter-spacing: 0.5px; text-transform: uppercase;
+    border-bottom: 1px solid #E2E8F0; white-space: nowrap;
+  }
+  td { padding: 14px 20px; }
+  tbody tr { border-bottom: 1px solid #F1F5F9; transition: background 0.12s; }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: #F8FAFC; }
+  .td-grade    { font-weight: 700; color: #0F172A; }
+  .td-usa      { font-weight: 700; color: #1A56DB; }
+  .td-muted    { color: #CBD5E1; }
+  .badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 11px; font-weight: 700; border-radius: 5px; padding: 3px 9px;
+    white-space: nowrap;
+  }
+  .badge-red    { background: #FEF2F2; color: #B91C1C; }
+  .badge-green  { background: #F0FDF4; color: #15803D; }
+  .badge-blue   { background: #EFF6FF; color: #1D4ED8; }
+  .badge-pct    { font-size: 10px; font-weight: 600; border-radius: 4px; padding: 2px 7px; }
+  .badge-pct-red   { background: #FFF1F1; color: #DC2626; border: 1px solid #FECACA; }
+  .badge-pct-green { background: #F0FDF4; color: #16A34A; border: 1px solid #BBF7D0; }
+  .stock-vs { display: flex; align-items: center; gap: 8px; }
+  .paid-vs   { display: flex; align-items: center; gap: 8px; }
+
+  /* ── Footer ── */
+  .footer { margin-top: 24px; display: flex; justify-content: space-between; font-size: 11px; color: #94A3B8; flex-wrap: wrap; gap: 8px; }
+
+  /* ── Animations ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .fade-in { animation: fadeUp 0.35s ease both; }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-logo">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+  </div>
+  <span class="topbar-name">SteelPulse</span>
+  <span class="topbar-sub">Market Intelligence</span>
+  <div class="topbar-live">
+    <div class="live-dot"></div>
+    <span>March 2025 — Live</span>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs-wrap">
+  <div class="tabs-inner">
+    <button class="tab-btn active" onclick="setRegion('Alberta')">
+      🇨🇦 Alberta <span class="tab-count">3</span>
+    </button>
+    <button class="tab-btn" onclick="setRegion('Quebec')">
+      🇨🇦 Quebec <span class="tab-count">3</span>
+    </button>
+    <button class="tab-btn" onclick="setRegion('Mississippi')">
+      🇺🇸 Mississippi <span class="tab-count">4</span>
+    </button>
+    <button class="tab-btn" onclick="setRegion('Michigan')">
+      🇺🇸 Michigan <span class="tab-count">1</span>
+    </button>
+    <div class="tabs-info">USD · Incl. freight · Tariffs applied where applicable</div>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main" id="main-content"></div>
+
+<script>
+const REGIONS = {
+  Alberta: {
+    flag: '🇨🇦', country: 'Canada',
+    note: "Forecasting an increase of the steel price as per the political conditions. However, it's all staged since Nucor still has room for February at the end of January.",
+    indices: [
+      { label: 'Plate index increase since Sept 30th', value: 0.24 },
+      { label: 'HRC index increase since Sept',        value: 0.30 },
+    ],
+    grades: [
+      { name: 'SA516-70',            marketUSA: 0.8375, marketKorea: 0.54, avgStock: 0.6000, avgPaid: 0.6500, leadUSA: '8 weeks',  leadKorea: 'Sept delivery' },
+      { name: 'SA51670N IMPACT -50', marketUSA: 0.8625, marketKorea: 0.54, avgStock: 0.7400, avgPaid: 0.6900, leadUSA: '8 weeks',  leadKorea: 'Sept delivery' },
+      { name: 'SA517B',              marketUSA: 1.6250, marketKorea: null,  avgStock: 1.3000, avgPaid: 1.3071, leadUSA: '12 weeks', leadKorea: 'Sept delivery' },
+    ],
+  },
+  Quebec: {
+    flag: '🇨🇦', country: 'Canada', note: null, indices: null,
+    grades: [
+      { name: 'SA455',    marketUSA: 0.8250, marketKorea: 0.54, avgStock: 0.5255, avgPaid: 0.5468, leadUSA: '8 weeks',  leadKorea: 'Oct delivery' },
+      { name: 'SA516-70', marketUSA: 0.8000, marketKorea: 0.54, avgStock: 0.6000, avgPaid: 0.5612, leadUSA: '8 weeks',  leadKorea: 'Oct delivery' },
+      { name: 'SA517B',   marketUSA: 1.5125, marketKorea: null,  avgStock: 1.1700, avgPaid: 1.2000, leadUSA: '12 weeks', leadKorea: 'Oct delivery' },
+    ],
+  },
+  Mississippi: {
+    flag: '🇺🇸', country: 'USA', note: null, indices: null,
+    grades: [
+      { name: 'SA516-70', marketUSA: 0.64, marketKorea: 0.90,  avgStock: 0.6286, avgPaid: 0.63, leadUSA: '8 weeks',  leadKorea: null },
+      { name: 'SA51670N', marketUSA: 0.68, marketKorea: 0.90,  avgStock: 0.9643, avgPaid: 0.96, leadUSA: '8 weeks',  leadKorea: null },
+      { name: 'SA517E',   marketUSA: 1.39, marketKorea: null,   avgStock: 1.3786, avgPaid: 1.38, leadUSA: '12 weeks', leadKorea: null },
+      { name: 'SA612',    marketUSA: 0.64, marketKorea: 0.975,  avgStock: 0.6357, avgPaid: 0.63, leadUSA: null,       leadKorea: null },
+    ],
+  },
+  Michigan: {
+    flag: '🇺🇸', country: 'USA', note: null, indices: null,
+    grades: [
+      { name: 'SA455', marketUSA: 0.6915, marketKorea: 0.87, avgStock: 0.6569, avgPaid: 0.70, leadUSA: '8 weeks', leadKorea: null },
+    ],
+  },
+};
+
+const fmt = v => v != null ? '$' + v.toFixed(4) : '—';
+const fmtPct = v => '+' + (v * 100).toFixed(2) + '%';
+
+let chart1 = null, chart2 = null;
+
+function setRegion(name) {
+  // Update tabs
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    b.classList.toggle('active', b.textContent.trim().includes(name));
+  });
+  renderRegion(name);
+}
+
+function animateCount(el, target, duration = 750) {
+  let start = null;
+  const step = ts => {
+    if (!start) start = ts;
+    const p = Math.min((ts - start) / duration, 1);
+    const ease = 1 - Math.pow(1 - p, 4);
+    el.textContent = '$' + (target * ease).toFixed(4);
+    if (p < 1) requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+}
+
+function animateBar(el, target, max, delay = 0) {
+  setTimeout(() => {
+    el.style.width = (target / max * 100) + '%';
+  }, delay + 150);
+}
+
+function renderRegion(name) {
+  const r = REGIONS[name];
+  const grades = r.grades;
+  const avgUSA   = grades.reduce((s, g) => s + g.marketUSA, 0) / grades.length;
+  const avgStock = grades.reduce((s, g) => s + g.avgStock,  0) / grades.length;
+  const maxMarket = Math.max(...grades.map(g => g.marketUSA));
+
+  const summaryCards = [
+    { label: 'Avg Market USA',  value: '$' + avgUSA.toFixed(4),   sub: 'per pound',   color: '#1A56DB' },
+    { label: 'Avg Stock Price', value: '$' + avgStock.toFixed(4), sub: 'per pound',   color: '#64748B' },
+    { label: 'Highest Grade',   value: '$' + maxMarket.toFixed(4),sub: 'market peak', color: '#DC2626' },
+  ].map(s => `
+    <div class="summary-card">
+      <div class="sc-label">${s.label}</div>
+      <div class="sc-value" style="color:${s.color}">${s.value}</div>
+      <div class="sc-sub">${s.sub}</div>
+    </div>`).join('');
+
+  const alertHtml = r.note ? `
+    <div class="alert fade-in">
+      <span class="alert-icon">ℹ</span>
+      <div>
+        <div class="alert-title">Market Intelligence</div>
+        <div class="alert-body">${r.note}</div>
+      </div>
+    </div>` : '';
+
+  const indexHtml = r.indices ? `
+    <div class="index-row fade-in">
+      ${r.indices.map(idx => `
+        <div class="index-badge">
+          <div class="ib-label">${idx.label}</div>
+          <div class="ib-sep"></div>
+          <div class="ib-value">${fmtPct(idx.value)}</div>
+        </div>`).join('')}
+    </div>` : '';
+
+  // KPI Cards
+  const maxV = Math.max(...grades.flatMap(g => [g.marketUSA, g.marketKorea, g.avgStock, g.avgPaid].filter(Boolean)));
+  const kpiHtml = grades.map((g, i) => {
+    const delta = g.avgPaid != null ? g.marketUSA - g.avgPaid : null;
+    const isAbove = delta != null && delta > 0;
+    const deltaHtml = delta != null ? `
+      <div class="kpi-delta" style="background:${isAbove ? '#FEF2F2' : '#F0FDF4'}; border:1px solid ${isAbove ? '#FECACA' : '#BBF7D0'}; color:${isAbove ? '#B91C1C' : '#15803D'}">
+        <div class="kd-val">${isAbove ? '▲' : '▼'} ${Math.abs(delta).toFixed(4)}</div>
+        <div class="kd-sub">vs Paid</div>
+      </div>` : '';
+
+    const bars = [
+      { label: 'Market USA',   val: g.marketUSA,   color: '#1A56DB' },
+      { label: 'Market Korea', val: g.marketKorea, color: '#93C5FD' },
+      { label: 'Avg Stock',    val: g.avgStock,    color: '#C7D2FE' },
+    ].filter(b => b.val != null).map((b, j) => `
+      <div>
+        <div class="kpi-bar-row">
+          <span>${b.label}</span>
+          <span>${fmt(b.val)}</span>
+        </div>
+        <div class="bar-track">
+          <div class="bar-fill" data-val="${b.val}" data-max="${maxV}" data-delay="${i * 120 + j * 80}" style="background:${b.color}"></div>
+        </div>
+      </div>`).join('');
+
+    const details = [
+      { label: 'Market Korea',  val: fmt(g.marketKorea) },
+      { label: 'Average Stock', val: fmt(g.avgStock)    },
+      { label: 'Avg Paid FYTD', val: fmt(g.avgPaid)     },
+      { label: 'Lead (USA)',     val: g.leadUSA || '—'   },
+    ].map(d => `
+      <div class="kpi-detail-cell">
+        <div class="dc-label">${d.label}</div>
+        <div class="dc-val ${d.val === '—' ? 'empty' : ''}">${d.val}</div>
+      </div>`).join('');
+
+    return `
+      <div class="kpi-card" style="animation-delay:${i * 0.07}s">
+        <div class="kpi-header">
+          <div>
+            <div class="kpi-grade">${g.name}</div>
+            <div class="kpi-price" data-target="${g.marketUSA}">$${g.marketUSA.toFixed(4)}</div>
+            <div class="kpi-label">Market Price — USA</div>
+          </div>
+          ${deltaHtml}
+        </div>
+        <div class="kpi-bars">${bars}</div>
+        <div class="kpi-details">${details}</div>
+      </div>`;
+  }).join('');
+
+  // Table rows
+  const tableRows = grades.map((g, i) => {
+    const stockDelta = g.marketUSA - g.avgStock;
+    const stockPct   = (stockDelta / g.avgStock) * 100;
+    const stockAbove = stockDelta > 0;
+    const stockBadge = `
+      <div class="stock-vs">
+        <span class="badge ${stockAbove ? 'badge-red' : 'badge-green'}">
+          ${stockAbove ? '▲' : '▼'} ${Math.abs(stockDelta).toFixed(4)}
+        </span>
+        <span class="badge-pct ${stockAbove ? 'badge-pct-red' : 'badge-pct-green'}">
+          ${stockAbove ? '+' : ''}${stockPct.toFixed(1)}%
+        </span>
+      </div>`;
+
+    const delta = g.avgPaid != null ? g.marketUSA - g.avgPaid : null;
+    const isAbove = delta != null && delta > 0;
+    const paidCell = g.avgPaid != null ? `
+      <div class="paid-vs">
+        <span>${fmt(g.avgPaid)}</span>
+        <span class="badge ${isAbove ? 'badge-red' : 'badge-green'}" style="font-size:10px">
+          ${isAbove ? '▲' : '▼'} ${Math.abs(delta).toFixed(4)}
+        </span>
+      </div>` : '<span class="td-muted">—</span>';
+
+    const leadUSACell = g.leadUSA
+      ? `<span class="badge badge-blue">${g.leadUSA}</span>`
+      : '<span class="td-muted">—</span>';
+
+    const koreaCell = g.marketKorea != null
+      ? `<span>${fmt(g.marketKorea)}</span>`
+      : '<span class="td-muted">—</span>';
+
+    const leadKoreaCell = g.leadKorea
+      ? `<span style="color:#64748B;font-size:12px">${g.leadKorea}</span>`
+      : '<span class="td-muted">—</span>';
+
+    return `
+      <tr>
+        <td class="td-grade">${g.name}</td>
+        <td class="td-usa">${fmt(g.marketUSA)}</td>
+        <td>${koreaCell}</td>
+        <td style="font-weight:500;color:#334155">${fmt(g.avgStock)}</td>
+        <td>${stockBadge}</td>
+        <td>${paidCell}</td>
+        <td>${leadUSACell}</td>
+        <td>${leadKoreaCell}</td>
+      </tr>`;
+  }).join('');
+
+  // Chart data
+  const chartLabels  = grades.map(g => g.name.length > 12 ? g.name.slice(0, 11) + '…' : g.name);
+  const chartUSA     = grades.map(g => g.marketUSA);
+  const chartKorea   = grades.map(g => g.marketKorea);
+  const chartStock   = grades.map(g => g.avgStock);
+  const chartPaid    = grades.map(g => g.avgPaid);
+
+  // Render HTML
+  document.getElementById('main-content').innerHTML = `
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">${name} <span>— Steel Price Report</span></h1>
+        <p class="page-sub">${r.country} · ${grades.length} grade${grades.length > 1 ? 's' : ''} · Does not include B&P</p>
+      </div>
+      <div class="summary-cards">${summaryCards}</div>
+    </div>
+
+    ${alertHtml}
+    ${indexHtml}
+
+    <div class="kpi-grid">${kpiHtml}</div>
+
+    <div class="charts-row">
+      <div class="chart-card">
+        <div class="chart-title">Price Comparison by Grade</div>
+        <div class="chart-sub">Market USA · Market Korea · Average Stock — USD/lb</div>
+        <div class="chart-wrap"><canvas id="chart1"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Stock vs. Paid FYTD</div>
+        <div class="chart-sub">Comparing inventory cost to actual paid — USD/lb</div>
+        <div class="chart-wrap"><canvas id="chart2"></canvas></div>
+      </div>
+    </div>
+
+    <div class="table-card">
+      <div class="table-header">
+        <div class="th-title">Detailed Data Table</div>
+        <div class="th-sub">${name} · March 2025</div>
+      </div>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Steel Grade</th>
+              <th>Market Price USA</th>
+              <th>Market Price Korea</th>
+              <th>Average Stock</th>
+              <th>Stock vs Market USA</th>
+              <th>Avg Paid FYTD</th>
+              <th>Lead Time USA</th>
+              <th>Lead Time Korea</th>
+            </tr>
+          </thead>
+          <tbody>${tableRows}</tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="footer">
+      <span>SteelPulse Market Intelligence Platform — March 2025</span>
+      <span>All prices in USD/lb · Including freight · Tariffs applied · Does not include B&P</span>
+    </div>
+  `;
+
+  // Animate KPI counters
+  document.querySelectorAll('.kpi-price[data-target]').forEach(el => {
+    animateCount(el, parseFloat(el.dataset.target));
+  });
+
+  // Animate progress bars
+  document.querySelectorAll('.bar-fill[data-val]').forEach(el => {
+    animateBar(el, parseFloat(el.dataset.val), parseFloat(el.dataset.max), parseInt(el.dataset.delay) || 0);
+  });
+
+  // Destroy old charts
+  if (chart1) { chart1.destroy(); chart1 = null; }
+  if (chart2) { chart2.destroy(); chart2 = null; }
+
+  const chartDefaults = {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'bottom', labels: { font: { family: 'Inter', size: 11 }, color: '#64748B', boxWidth: 10, padding: 14 } },
+      tooltip: {
+        backgroundColor: '#fff', titleColor: '#0F172A', bodyColor: '#64748B',
+        borderColor: '#E2E8F0', borderWidth: 1,
+        titleFont: { family: 'Inter', weight: '700' },
+        bodyFont: { family: 'Inter' },
+        padding: 12,
+        callbacks: { label: ctx => ` ${ctx.dataset.label}: $${(ctx.parsed.y || 0).toFixed(4)}` }
+      }
+    },
+    scales: {
+      x: { grid: { display: false }, ticks: { font: { family: 'Inter', size: 10 }, color: '#94A3B8' }, border: { display: false } },
+      y: { grid: { color: '#F1F5F9' }, ticks: { font: { family: 'Inter', size: 10 }, color: '#94A3B8', callback: v => '$' + v }, border: { display: false } }
+    }
+  };
+
+  chart1 = new Chart(document.getElementById('chart1'), {
+    type: 'bar',
+    data: {
+      labels: chartLabels,
+      datasets: [
+        { label: 'Market USA',   data: chartUSA,   backgroundColor: '#1A56DB', borderRadius: 3 },
+        { label: 'Market Korea', data: chartKorea, backgroundColor: '#93C5FD', borderRadius: 3 },
+        { label: 'Avg Stock',    data: chartStock,  backgroundColor: '#E0E7FF', borderRadius: 3 },
+      ]
+    },
+    options: { ...chartDefaults, plugins: { ...chartDefaults.plugins } }
+  });
+
+  chart2 = new Chart(document.getElementById('chart2'), {
+    type: 'bar',
+    data: {
+      labels: chartLabels,
+      datasets: [
+        { label: 'Avg Stock', data: chartStock, backgroundColor: '#1A56DB', borderRadius: 3 },
+        { label: 'Avg Paid',  data: chartPaid,  backgroundColor: '#FCA5A5', borderRadius: 3 },
+      ]
+    },
+    options: { ...chartDefaults }
+  });
+}
+
+// Init
+renderRegion('Alberta');
+</script>
+</body>
+</html>
