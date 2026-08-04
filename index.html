@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <!-- SteelPulse Dashboard — GitHub Pages ready -->
-<title>SteelPulse — Market Intelligence | May 2025</title>
+<title>SteelPulse — Market Intelligence | August 2025</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -106,7 +106,7 @@
   </div>
   <span class="topbar-name">SteelPulse</span>
   <span class="topbar-sub">Market Intelligence</span>
-  <div class="topbar-live"><div class="live-dot"></div><span>May 2025 — Live</span></div>
+  <div class="topbar-live"><div class="live-dot"></div><span>August 2025 — Live</span></div>
 </div>
 <div class="tabs-wrap">
   <div class="tabs-inner">
@@ -123,34 +123,34 @@ const REGIONS = {
   Alberta: {
     flag:'🇨🇦',country:'Canada',
     note:"Forecasting an increase of the steel price as per the political conditions. Steel is now under allocation.",
-    indices:[{label:'Plate index increase since Sept 30th',value:0.33},{label:'HRC index increase since Sept',value:0.33}],
+    indices:[{label:'Plate index increase since Sept 30th',value:0.37},{label:'HRC index increase since Sept',value:0.41}],
     grades:[
-      {name:'SA516-70',marketUSA:0.90625,marketKorea:0.81,avgStock:0.6569,avgPaid:0.6788,leadUSA:'12 weeks',leadKorea:'Nov delivery'},
-      {name:'SA51670N IMPACT -50',marketUSA:0.93125,marketKorea:0.81,avgStock:0.6058,avgPaid:0.6350,leadUSA:'12 weeks',leadKorea:'Nov delivery'},
-      {name:'SA517B',marketUSA:1.6875,marketKorea:null,avgStock:1.3796,avgPaid:1.3358,leadUSA:'12 weeks',leadKorea:'Nov delivery'},
+      {name:'SA516-70',marketUSA:0.9625,marketKorea:0.81,avgStock:0.6569,avgPaid:0.6788,leadUSA:'12 weeks',leadKorea:'Nov delivery'},
+      {name:'SA51670N IMPACT -50',marketUSA:1.0000,marketKorea:0.81,avgStock:0.6058,avgPaid:0.6350,leadUSA:'12 weeks',leadKorea:'Nov delivery'},
+      {name:'SA517B',marketUSA:1.7375,marketKorea:null,avgStock:1.3796,avgPaid:1.3358,leadUSA:'12 weeks',leadKorea:'Nov delivery'},
     ],
   },
   Quebec: {
     flag:'🇨🇦',country:'Canada',note:null,indices:null,
     grades:[
-      {name:'SA455',marketUSA:0.9000,marketKorea:0.81,avgStock:0.5400,avgPaid:0.8467,leadUSA:'12 weeks',leadKorea:'Dec delivery'},
-      {name:'SA516-70',marketUSA:0.9000,marketKorea:0.81,avgStock:0.6000,avgPaid:0.5839,leadUSA:'10 weeks',leadKorea:'Dec delivery'},
-      {name:'SA517B',marketUSA:1.5500,marketKorea:null,avgStock:1.1700,avgPaid:1.2000,leadUSA:'12 weeks',leadKorea:'Dec delivery'},
+      {name:'SA455',marketUSA:0.96875,marketKorea:0.81,avgStock:0.5400,avgPaid:0.8467,leadUSA:'12 weeks',leadKorea:'Dec delivery'},
+      {name:'SA516-70',marketUSA:0.9625,marketKorea:0.81,avgStock:0.6000,avgPaid:0.5839,leadUSA:'10 weeks',leadKorea:'Dec delivery'},
+      {name:'SA517B',marketUSA:1.6125,marketKorea:null,avgStock:1.1700,avgPaid:1.2000,leadUSA:'12 weeks',leadKorea:'Dec delivery'},
     ],
   },
   Mississippi: {
     flag:'🇺🇸',country:'USA',note:null,indices:null,
     grades:[
-      {name:'SA516-70',marketUSA:0.7400,marketKorea:0.90,avgStock:0.6286,avgPaid:0.63,leadUSA:'10 weeks',leadKorea:null},
-      {name:'SA51670N',marketUSA:0.7600,marketKorea:0.90,avgStock:0.9643,avgPaid:0.99,leadUSA:'10 weeks',leadKorea:null},
+      {name:'SA516-70',marketUSA:0.7700,marketKorea:0.90,avgStock:0.6286,avgPaid:0.63,leadUSA:'10 weeks',leadKorea:null},
+      {name:'SA51670N',marketUSA:0.7800,marketKorea:0.90,avgStock:0.9643,avgPaid:0.99,leadUSA:'10 weeks',leadKorea:null},
       {name:'SA517E',marketUSA:1.4200,marketKorea:null,avgStock:1.3786,avgPaid:1.90,leadUSA:'12 weeks',leadKorea:null},
-      {name:'SA612',marketUSA:0.7400,marketKorea:0.975,avgStock:0.6357,avgPaid:0.63,leadUSA:null,leadKorea:null},
+      {name:'SA612',marketUSA:0.7500,marketKorea:0.975,avgStock:0.6357,avgPaid:0.63,leadUSA:null,leadKorea:null},
     ],
   },
   Michigan: {
     flag:'🇺🇸',country:'USA',note:null,indices:null,
     grades:[
-      {name:'SA455',marketUSA:0.7700,marketKorea:0.87,avgStock:0.7400,avgPaid:0.71,leadUSA:'12 weeks',leadKorea:null},
+      {name:'SA455',marketUSA:0.8000,marketKorea:0.87,avgStock:0.7400,avgPaid:0.71,leadUSA:'12 weeks',leadKorea:null},
     ],
   },
 };
@@ -184,7 +184,7 @@ function renderRegion(name){
     return `<tr><td class="td-grade">${g.name}</td><td class="td-usa">${fmt(g.marketUSA)}</td><td>${g.marketKorea!=null?fmt(g.marketKorea):'<span class="td-muted">—</span>'}</td><td style="font-weight:500;color:#334155">${fmt(g.avgStock)}</td><td>${stockBadge}</td><td>${paidCell}</td><td>${g.leadUSA?`<span class="badge badge-blue">${g.leadUSA}</span>`:'<span class="td-muted">—</span>'}</td><td>${g.leadKorea?`<span style="color:#64748B;font-size:12px">${g.leadKorea}</span>`:'<span class="td-muted">—</span>'}</td></tr>`;
   }).join('');
   const chartLabels=grades.map(g=>g.name.length>12?g.name.slice(0,11)+'…':g.name);
-  document.getElementById('main-content').innerHTML=`<div class="page-header"><div><h1 class="page-title">${name} <span>— Steel Price Report</span></h1><p class="page-sub">${r.country} · ${grades.length} grade${grades.length>1?'s':''} · Does not include B&P</p></div><div class="summary-cards">${summaryCards}</div></div>${alertHtml}${indexHtml}<div class="kpi-grid">${kpiHtml}</div><div class="charts-row"><div class="chart-card"><div class="chart-title">Price Comparison by Grade</div><div class="chart-sub">Market USA · Market Korea · Average Stock — USD/lb</div><div class="chart-wrap"><canvas id="chart1"></canvas></div></div><div class="chart-card"><div class="chart-title">Stock vs. Paid FYTD</div><div class="chart-sub">Comparing inventory cost to actual paid — USD/lb</div><div class="chart-wrap"><canvas id="chart2"></canvas></div></div></div><div class="table-card"><div class="table-header"><div class="th-title">Detailed Data Table</div><div class="th-sub">${name} · May 2025</div></div><div class="table-scroll"><table><thead><tr><th>Steel Grade</th><th>Market Price USA</th><th>Market Price Korea</th><th>Average Stock</th><th>Stock vs Market USA</th><th>Avg Paid FYTD</th><th>Lead Time USA</th><th>Lead Time Korea</th></tr></thead><tbody>${tableRows}</tbody></table></div></div><div class="footer"><span>SteelPulse Market Intelligence Platform — May 2025</span><span>All prices in USD/lb · Including freight · Tariffs applied · Does not include B&P</span></div>`;
+  document.getElementById('main-content').innerHTML=`<div class="page-header"><div><h1 class="page-title">${name} <span>— Steel Price Report</span></h1><p class="page-sub">${r.country} · ${grades.length} grade${grades.length>1?'s':''} · Does not include B&P</p></div><div class="summary-cards">${summaryCards}</div></div>${alertHtml}${indexHtml}<div class="kpi-grid">${kpiHtml}</div><div class="charts-row"><div class="chart-card"><div class="chart-title">Price Comparison by Grade</div><div class="chart-sub">Market USA · Market Korea · Average Stock — USD/lb</div><div class="chart-wrap"><canvas id="chart1"></canvas></div></div><div class="chart-card"><div class="chart-title">Stock vs. Paid FYTD</div><div class="chart-sub">Comparing inventory cost to actual paid — USD/lb</div><div class="chart-wrap"><canvas id="chart2"></canvas></div></div></div><div class="table-card"><div class="table-header"><div class="th-title">Detailed Data Table</div><div class="th-sub">${name} · August 2025</div></div><div class="table-scroll"><table><thead><tr><th>Steel Grade</th><th>Market Price USA</th><th>Market Price Korea</th><th>Average Stock</th><th>Stock vs Market USA</th><th>Avg Paid FYTD</th><th>Lead Time USA</th><th>Lead Time Korea</th></tr></thead><tbody>${tableRows}</tbody></table></div></div><div class="footer"><span>SteelPulse Market Intelligence Platform — August 2025</span><span>All prices in USD/lb · Including freight · Tariffs applied · Does not include B&P</span></div>`;
   document.querySelectorAll('.kpi-price[data-target]').forEach(el=>animateCount(el,parseFloat(el.dataset.target)));
   document.querySelectorAll('.bar-fill[data-val]').forEach(el=>animateBar(el,parseFloat(el.dataset.val),parseFloat(el.dataset.max),parseInt(el.dataset.delay)||0));
   if(chart1){chart1.destroy();chart1=null;}if(chart2){chart2.destroy();chart2=null;}
